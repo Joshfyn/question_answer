@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "279866714445",
+    "firebase_url": "https://q-a-meetup.firebaseio.com",
+    "project_id": "q-a-meetup",
+    "storage_bucket": "q-a-meetup.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:279866714445:android:1e4142abcc8e8846",
+        "android_client_info": {
+          "package_name": "com.murad.questionanswer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "279866714445-gg8ug3cn4sl2v8e2ihbo8d56ihd282k8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqqOLiyhwuOaCFdINatyOXqGlzAJDX2zo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
