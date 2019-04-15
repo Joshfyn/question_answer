@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:multi_image_picker/asset.dart';
 import 'Authentication.dart';
 import 'dart:io';
 import 'MyPosts.dart';
 import 'Dashboard.dart';
 import 'upload.dart';
 import 'package:question_answer/models/uploadPicture.dart';
+
+import 'package:sqflite/sqflite.dart';
+import 'package:question_answer/utils/databaseHelper.dart';
 
 class Home extends StatefulWidget {
   Home({
@@ -22,13 +26,81 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  DatabaseHelper databaseHelper = DatabaseHelper();
+  List<UploadPicture> uploadList;
+
+  List<String> photo;
+  
+
+  int count = 0;
+
   int photoIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    if (uploadList == null) {
+      uploadList = List<UploadPicture>();
+      updateView();
+    }
+    //image();
+
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Posts'),
+        actions: <Widget>[
+          new IconButton(
+            icon: new Icon(Icons.refresh),
+            onPressed: () {
+              print("Reloading..");
+              setState(() {
+                _isLoading = false;
+              });
+            },
+          )
+        ],
+      ),
+      body: showQuestion(),
+    );
+      
+  }
+
+
+  ListView showQuestion(){
+    return ListView.builder(
+      itemCount: count,
+      itemBuilder: (BuildContext context, int position) {
+        return Card(
+          color: Colors.white,
+          elevation: 2.0,
+          child: Column(
+            children: <Widget>[
+            
+              
+              
+            ],
+            
+           
+          ),
+        );
+      },
+    );
+    
+
+  }
+
+  void _previousImage() {
+    setState(() {
+      photoIndex = photoIndex > 0 ? photoIndex - 1 : 0;
+    });
+  }
+
   List<String> photos = [
     'images/image2.png',
     'images/graph.png',
     'images/image1.png',
     'images/image3.png'
   ];
+
   List<String> questionsList = [
     'What’s the difference between regular food and organic food?',
     'How old is the oldest person in the world?',
@@ -39,12 +111,6 @@ class _HomeState extends State<Home> {
     'images/image7.jpeg',
     'images/image6.jpg'
   ];
-
-  void _previousImage() {
-    setState(() {
-      photoIndex = photoIndex > 0 ? photoIndex - 1 : 0;
-    });
-  }
 
   void _nextImage() {
     setState(() {
@@ -77,183 +143,18 @@ class _HomeState extends State<Home> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Posts'),
-        actions: <Widget>[
-          new IconButton(
-            icon: new Icon(Icons.refresh),
-            onPressed: () {
-              print("Reloading..");
-              setState(() {
-                _isLoading = false;
-              });
-            },
-          )
-        ],
-      ),
-      body: ListView(shrinkWrap: true, children: <Widget>[
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Stack(
-              children: <Widget>[
-                Container(
-                  height: 400.0,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(photos[photoIndex]),
-                          fit: BoxFit.cover)),
-                ),
-                GestureDetector(
-                  child: Container(
-                    height: 400.0,
-                    width: MediaQuery.of(context).size.width,
-                    color: Colors.transparent,
-                  ),
-                  onTap: _nextImage,
-                ),
-                GestureDetector(
-                  child: Container(
-                    height: 400.0,
-                    width: MediaQuery.of(context).size.width / 2,
-                    color: Colors.transparent,
-                  ),
-                  onTap: _previousImage,
-                ),
-                Padding(
-                    padding: EdgeInsets.only(right: 15.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Material(
-                            elevation: 4.0,
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: Container(
-                              height: 40.0,
-                              width: 40.0,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4.0)),
-                              child: Icon(
-                                Icons.favorite,
-                                //color: Colors.red,
-                              ),
-                            ))
-                      ],
-                    )),
-                Positioned(
-                  top: 375.0,
-                  left: 25.0,
-                  right: 25.0,
-                  child: SelectedPhoto(
-                    numberOfDots: photos.length,
-                    photoIndex: photoIndex,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20.0),
-            Padding(
-              padding: EdgeInsets.only(right: 15.0),
-              child: Text(
-                'Graphs',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 5.0),
-              child: Text(
-                'Which graph is easily understandable ? ',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 15.0,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            SizedBox(height: 40.0),
-            _buildListItems(photosList[0], questionsList[0]),
-            SizedBox(height: 10.0),
-            _buildListItems(photosList[1], questionsList[1]),
-            SizedBox(height: 10.0),
-            _buildListItems(photosList[2], questionsList[2]),
-          ],
-        ),
-      ]),
-
-      // Bottom Navigation
-
-      bottomNavigationBar: new BottomAppBar(
-        color: Colors.blue[500],
-        child: new Container(
-          child: new Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              new IconButton(
-                  icon: new Icon(Icons.dashboard),
-                  iconSize: 30,
-                  color: Colors.white,
-                  onPressed: _dashboard),
-              new IconButton(
-                  icon: new Icon(Icons.account_box),
-                  iconSize: 30,
-                  color: Colors.white,
-                  onPressed: _myposts),
-              new IconButton(
-                  icon: new Icon(Icons.exit_to_app),
-                  iconSize: 30,
-                  color: Colors.white,
-                  onPressed: _logout)
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildListItems(String picture, String question) {
-    return Column(children: <Widget>[
-      Row(
-        children: <Widget>[
-          Container(
-            height: 100.0,
-            width: 100.0,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage(picture), fit: BoxFit.cover),
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(10.0),
-                    bottomRight: Radius.circular(10.0))),
-          ),
-          SizedBox(width: 10.0),
-          Container(
-            height: 100.0,
-            width: 300.0,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  question,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 15.0,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      )
-    ]);
+  
+  void updateView() {
+    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
+    dbFuture.then((database) {
+      Future<List<UploadPicture>> questionListFuture =
+          databaseHelper.getPictureList();
+      questionListFuture.then((uploadList) {
+        setState(() {
+          this.uploadList = uploadList;
+        });
+      });
+    });
   }
 }
 

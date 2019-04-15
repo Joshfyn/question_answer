@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as Path;
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:question_answer/models/uploadPicture.dart';
 import 'package:question_answer/utils/databaseHelper.dart';
@@ -18,6 +23,7 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'asset_view.dart';
 import 'package:multi_image_picker/asset.dart';
 import 'MyPosts.dart';
+import 'package:flutter/foundation.dart';
 
 class Upload extends StatefulWidget {
   final UploadPicture uploadPicture;
@@ -38,24 +44,30 @@ class _UploadPageState extends State<Upload> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
 
+  //get the images path
+  TextEditingController controller = TextEditingController();
+  String state1;
+  String state2;
+  String state3;
+  Future<Directory> path;
 
   //List images;
   List<Asset> images = List<Asset>();
   String _error;
-  
-
- 
 
   @override
   void initState() {
     super.initState();
-   
+  }
+
+  Future<File> writeData() async {
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    //titleController.text = uploadPicture.title;
-    //descriptionController.text = uploadPicture.description;
+    titleController.text = uploadPicture.title;
+    descriptionController.text = uploadPicture.description;
     return new MaterialApp(
       home: new Scaffold(
         appBar: new AppBar(
@@ -227,16 +239,47 @@ class _UploadPageState extends State<Upload> {
   }
 
   void updateDescripton() {
-    uploadPicture.description = titleController.text;
+    uploadPicture.description = descriptionController.text;
   }
 
   void _save() async {
+    
     _moveToLastScreen();
+
+    final Directory path = await getApplicationDocumentsDirectory();
+    String imgPath = Path.join(
+        path.path, "${DateTime.now().toUtc().toIso8601String()}a.jpg");
+    ByteData byteData = await images.elementAt(0).requestOriginal();
+    List<int> bytes = byteData.buffer
+        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
+    await File(imgPath).writeAsBytes(bytes);
+    debugPrint(imgPath);
+    uploadPicture.first_picture = imgPath;
+
+    final Directory path1 = await getApplicationDocumentsDirectory();
+    String imgPath1 = Path.join(
+        path1.path, "${DateTime.now().toUtc().toIso8601String()}b.jpg");
+    ByteData byteData1 = await images.elementAt(1).requestOriginal();
+    List<int> bytes1 = byteData1.buffer
+        .asUint8List(byteData1.offsetInBytes, byteData1.lengthInBytes);
+    await File(imgPath1).writeAsBytes(bytes1);
+    debugPrint(imgPath1);
+    uploadPicture.second_picture = imgPath1;
+
+    final Directory path2 = await getApplicationDocumentsDirectory();
+    String imgPath2 = Path.join(
+        path2.path, "${DateTime.now().toUtc().toIso8601String()}c.jpg");
+    ByteData byteData2 = await images.elementAt(2).requestOriginal();
+    List<int> bytes2 = byteData.buffer
+        .asUint8List(byteData2.offsetInBytes, byteData2.lengthInBytes);
+    await File(imgPath2).writeAsBytes(bytes2);
+    debugPrint(imgPath2);
+    uploadPicture.third_picture = imgPath2;
+
+    
+
     //_addImages();
     uploadPicture.timestamp = DateFormat.yMMMd().format(DateTime.now());
-    uploadPicture.first_picture = '15545454';
-    uploadPicture.second_picture = '545454545';
-    uploadPicture.third_picture = '9874515365';
     int result;
 
     if (uploadPicture.id == null) {
@@ -248,23 +291,12 @@ class _UploadPageState extends State<Upload> {
     }
 
     if (result == 0) {
-      //Failuere
+      //Failure
       _alertShow('Status', 'Question Posted Unsuccesfully');
     } else {
       //Success
       _alertShow('Status', 'Question Posted succesfully');
     }
-
-    /*  ByteData byteData = await asset.requestOriginal();
-    List<int> imageData = byteData.buffer.asUint8List();
-    StorageReference ref =
-        FirebaseStorage.instance.ref().child("some_image_bame.jpg");
-    StorageUploadTask uploadTask = ref.putData(imageData);
-
-    // Release the image data
-    asset.releaseOriginal(); */
-
-    //return await (await uploadTask.onComplete).ref.getDownloadURL();
   }
 
   void _delete() async {
@@ -294,16 +326,4 @@ class _UploadPageState extends State<Upload> {
     );
     showDialog(context: context, builder: (_) => alertDialog);
   }
-
-/*   void _saveImages(AssetView(index, images)) async {  
-    ByteData byteData = await images.requestOriginal();
-
-
-    
-   
-  }  */
-
-  
-    
-
 }

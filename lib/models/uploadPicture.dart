@@ -26,19 +26,19 @@ class UploadPicture {
   String get timestamp => _timestamp;
 
   set first_picture(String newfirst_picture) {
-    if (newfirst_picture.length <= 255){
+    if (newfirst_picture.length <= 1000000){
       this._first_picture = newfirst_picture;
     }
   }
 
   set second_picture(String newsecond_picture) {
-    if (newsecond_picture.length <= 255){
+    if (newsecond_picture.length <= 1000000){
       this._second_picture = newsecond_picture;
     }
   }
 
   set third_picture(String newthird_picture) {
-    if (newthird_picture.length <= 255){
+    if (newthird_picture.length <= 1000000){
       this._third_picture = newthird_picture;
     }
   }

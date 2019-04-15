@@ -55,7 +55,15 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getPicturesList() async {
     Database db = await this.database;
 
-    var result = await db.query(uploadTable, orderBy: '$colId ASC');
+    var result = await db.query(uploadTable, orderBy: '$colId DESC');
+    return result;
+  }
+
+  //Retrieve only last row
+  Future<List<Map<String, dynamic>>> getPicture() async {
+    Database db = await this.database;
+
+    var result = await db.rawQuery('SELECT * FROM $uploadTable ORDER BY $colId DESC LIMIT 1');
     return result;
   }
 
@@ -105,4 +113,19 @@ class DatabaseHelper {
     }
     return uploadList;
   }
+
+
+  //Get List of Map from the database anc converts it to a List of one Question
+  Future<List<UploadPicture>>  getPictureList() async {
+    Database db = await this.database;
+    var questionMapList = await getPicture();
+    int count = questionMapList.length;
+
+    List<UploadPicture> oneList = List<UploadPicture>();
+    for (int i = 0; i < count; i++) {
+      oneList.add(UploadPicture.fromMap(questionMapList[i]));
+    }
+    return oneList;
+  }
+
 }
