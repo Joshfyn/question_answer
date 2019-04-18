@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:multi_image_picker/asset.dart';
 import 'Authentication.dart';
 import 'dart:io';
 import 'MyPosts.dart';

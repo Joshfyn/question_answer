@@ -15,6 +15,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  meta: ^1.1.5
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -23,8 +24,8 @@ dependencies:
   intl: ^0.15.7
   image_picker:
   multi_image_picker: any
+
   timeago:
-  flutter_multiple_image_picker:
 
 
   firebase_auth: ^0.8.0+1
@@ -51,6 +52,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  plugin:
+    androidPackage: com.vitanov.multiimagepicker
+    pluginClass: MultiImagePickerPlugin
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

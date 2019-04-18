@@ -8,21 +8,12 @@ import 'package:sqflite/sqflite.dart';
 import 'package:question_answer/models/uploadPicture.dart';
 import 'package:question_answer/utils/databaseHelper.dart';
 import 'package:intl/intl.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'Home.dart';
-import 'package:question_answer/Crud.dart';
-import 'package:flutter_multiple_image_picker/flutter_multiple_image_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'asset_view.dart';
-import 'package:multi_image_picker/asset.dart';
-import 'MyPosts.dart';
 import 'package:flutter/foundation.dart';
 
 class Upload extends StatefulWidget {
@@ -153,7 +144,12 @@ class _UploadPageState extends State<Upload> {
         shrinkWrap: true,
         padding: const EdgeInsets.all(5.0),
         children: List.generate(images.length, (index) {
-          return AssetView(index, images[index]);
+          Asset asset = images[index];
+          return AssetThumb(
+            asset: asset,
+            width: 300,
+            height: 300,
+          );
         }),
       ),
     );
@@ -243,7 +239,6 @@ class _UploadPageState extends State<Upload> {
   }
 
   void _save() async {
-    
     _moveToLastScreen();
 
     final Directory path = await getApplicationDocumentsDirectory();
@@ -275,8 +270,6 @@ class _UploadPageState extends State<Upload> {
     await File(imgPath2).writeAsBytes(bytes2);
     debugPrint(imgPath2);
     uploadPicture.third_picture = imgPath2;
-
-    
 
     //_addImages();
     uploadPicture.timestamp = DateFormat.yMMMd().format(DateTime.now());
